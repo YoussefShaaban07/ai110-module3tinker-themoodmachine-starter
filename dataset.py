@@ -23,6 +23,15 @@ POSITIVE_WORDS = [
     "chill",
     "relaxed",
     "amazing",
+    # added while expanding the dataset (slang + emoji signals)
+    "proud",
+    "hopeful",
+    "chilling",
+    "fire",      # slang: "that's fire" = good
+    ":)",
+    "🙂",
+    "🔥",
+    "😊",
 ]
 
 NEGATIVE_WORDS = [
@@ -36,6 +45,13 @@ NEGATIVE_WORDS = [
     "stressed",
     "hate",
     "boring",
+    # added while expanding the dataset (slang + emoji signals)
+    "worst",
+    "broke",
+    "ugh",
+    ":(",
+    "💀",
+    "😭",
 ]
 
 # ---------------------------------------------------------------------
@@ -66,6 +82,47 @@ TRUE_LABELS = [
     "positive",  # "So excited for the weekend"
     "negative",  # "I am not happy about this"
 ]
+
+# ---------------------------------------------------------------------
+# Expanded dataset (added by me)
+# ---------------------------------------------------------------------
+# A mix of slang, emojis, sarcasm, and genuinely-mixed feelings. Several of
+# these are deliberately hard to label — I noted the tricky ones so they are
+# easy to inspect later against both the rule based and ML models.
+NEW_POSTS = [
+    "Lowkey stressed but highkey proud of myself 🥲",   # mixed: stress + pride
+    "this app is straight fire no cap 🔥",               # positive: slang
+    "I absolutely love getting stuck in traffic",        # SARCASM -> really negative
+    "meh, it's whatever",                                # neutral / flat
+    "wow what a fantastic day, everything broke 💀",     # SARCASM -> really negative
+    "just chilling, nothing much going on",              # neutral
+    "I'm not sad, just tired",                           # negation + tired -> negative
+    "so happy i could cry 😭",                           # positive (crying-happy)
+    "ugh mondays are the worst but coffee helps",        # mixed
+    "10/10 would NOT recommend",                         # negative (negation)
+]
+
+NEW_LABELS = [
+    "mixed",
+    "positive",
+    "negative",   # a friend might argue "positive" if they miss the sarcasm
+    "neutral",
+    "negative",
+    "neutral",
+    "negative",
+    "positive",   # "😭" reads negative alone, but the sentence is happy
+    "mixed",
+    "negative",
+]
+
+SAMPLE_POSTS.extend(NEW_POSTS)
+TRUE_LABELS.extend(NEW_LABELS)
+
+# Safety check: the two lists must always stay aligned.
+assert len(SAMPLE_POSTS) == len(TRUE_LABELS), (
+    f"SAMPLE_POSTS ({len(SAMPLE_POSTS)}) and TRUE_LABELS "
+    f"({len(TRUE_LABELS)}) must be the same length."
+)
 
 # TODO: Add 5-10 more posts and labels.
 #
