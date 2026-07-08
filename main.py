@@ -2,7 +2,13 @@
 Entry point for the Mood Machine rule based mood analyzer.
 """
 
+import sys
 from typing import List
+
+# Make sure emojis in the dataset print correctly on every platform
+# (Windows terminals default to cp1252 and would otherwise crash).
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from mood_analyzer import MoodAnalyzer
 from dataset import SAMPLE_POSTS, TRUE_LABELS
@@ -26,11 +32,9 @@ def evaluate_rule_based(posts: List[str], labels: List[str]) -> float:
         if is_correct:
             correct += 1
 
-        # If you implement explain(), you can uncomment these lines:
-        # reason = analyzer.explain(text)
-        # print(f'"{text}" -> predicted={predicted_label}, true={true_label} ({reason})')
-
-        print(f'"{text}" -> predicted={predicted_label}, true={true_label}')
+        reason = analyzer.explain(text)
+        mark = "OK " if is_correct else "XX "
+        print(f'{mark}"{text}" -> predicted={predicted_label}, true={true_label} ({reason})')
 
     if total == 0:
         print("\nNo labeled examples to evaluate.")
