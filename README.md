@@ -1,67 +1,41 @@
 # The Mood Machine
 
-The Mood Machine is a simple text classifier that begins with a rule based approach and can optionally be extended with a small machine learning model. It tries to guess whether a short piece of text sounds **positive**, **negative**, **neutral**, or even **mixed** based on patterns in your data.
+A sentiment classifier for short, social-media-style posts that labels each one **positive**, **negative**, **neutral** or **mixed**. I built a rule-based model and a scikit-learn baseline side by side to compare *where* each one fails on the same data.
 
-This lab gives you hands on experience with how basic systems work, where they break, and how different modeling choices affect fairness and accuracy. You will edit code, add data, run experiments, and write a short model card reflection.
+**Stack:** Python, scikit-learn · Built for CodePath AI110 (Module 3). Full write-up in the [model card](model_card.md).
 
----
+## Results
 
-## Repo Structure
+| Model | Accuracy | What it means |
+|---|---|---|
+| Rule-based (`mood_analyzer.py`) | **0.62** (10/16) | Fails in predictable, explainable ways: sarcasm, unknown words |
+| Logistic regression (`ml_experiments.py`) | 1.00 (16/16) | Training accuracy only. It memorized the dataset and would not hold up on new wording |
 
-```plaintext
-├── dataset.py         # Starter word lists and example posts (you will expand these)
-├── mood_analyzer.py   # Rule based classifier with TODOs to improve
-├── main.py            # Runs the rule based model and interactive demo
-├── ml_experiments.py  # (New) A tiny ML classifier using scikit-learn
-├── model_card.md      # Template to fill out after experimenting
-└── requirements.txt   # Dependencies for optional ML exploration
-```
+The comparison was the point: the rule model's mistakes are systematic and can be traced token by token, while the ML model's perfect score is overfitting on 16 posts.
 
----
+## What I built
 
-## Getting Started
+- **Rule-based scoring** with word weights (strong words and emojis count double), **negation** that flips the next sentiment word ("not happy" → negative), and a **mixed** label when positive and negative signals cancel out.
+- **Emoji handling**: emojis are split into their own tokens and scored (🔥 positive, 💀 negative).
+- **Dataset expansion** from 6 to 16 labeled posts, adding slang ("no cap", "lowkey"), emojis, sarcasm and mixed-emotion posts.
+- **`explain()`**, which prints exactly which tokens drove each prediction.
+- **A model card** covering failure cases, dialect bias in a fixed English word list, and what a real test set would need.
 
-1. Open this folder in VS Code.
-2. Make sure your Python environment is active.
-3. Install dependencies:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. Run the rule-based starter:
-
-    ```bash
-    python main.py
-    ```
-
-If pieces of the analyzer are not implemented yet, you will see helpful errors that guide you to the TODOs.
-
-To try the ML model later, run:
+## Run it
 
 ```bash
-python ml_experiments.py
+pip install -r requirements.txt
+python main.py            # rule-based model plus an interactive demo
+python ml_experiments.py  # scikit-learn baseline
 ```
 
----
+## Files
 
-## What You Will Do
-
-During this lab you will:
-
-- Implement the missing parts of the rule based `MoodAnalyzer`.
-- Add new positive and negative words.
-- Expand the dataset with more posts, including slang, emojis, sarcasm, or mixed emotions.
-- Observe unusual or incorrect predictions and think about why they happen.
-- Train a tiny machine learning model and compare its behavior to your rule based system.
-- Complete the model card with your findings about data, behavior, limitations, and improvements.
-- The goal is to help you reason about how models behave, how data shapes them, and why even small design choices matter.
-
----
-
-## Tips
-
-- Start with preprocessing before updating scoring rules.
-- When debugging, print tokens, scores, or intermediate choices.
-- Ask an AI assistant to help create edge case posts or unusual wording.
-- Try examples that mislead or confuse your model. Failure cases teach you the most.
+```plaintext
+├── dataset.py         # labeled posts and sentiment word lists
+├── mood_analyzer.py   # rule-based classifier
+├── main.py            # runs the rule-based model and the interactive demo
+├── ml_experiments.py  # CountVectorizer + LogisticRegression baseline
+├── model_card.md      # evaluation, limitations and ethics write-up
+└── requirements.txt
+```
